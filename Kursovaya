@@ -1,0 +1,60 @@
+//Вариант 9. Воронин Сергей Александрович. ИВТ-22.
+//Программа-иллюстратор для сравнения метода сортировки прямым выбором и пузырьком(сравнение количества сравнений).
+//Программа расставляет учеников по росту(возрастанию)на уроке физкультуры.
+
+#include <iostream>
+#include <vector>
+#include <string>
+
+struct Student {                     //Класс для переменной: Ученик.
+	std::string Name;                     //Его имя.
+	int Height;                      //Его рост.
+};
+
+/// <summary>
+/// //Функция SortBubble сортирует полученный вектор пузырьком.
+/// </summary>
+/// <param name="v"></param>
+/// <returns></returns>
+int SortBubble(std::vector<Student> v) {               //Функция SortBubble сортирует полученный вектор пузырьком, выводит отсортированный вектор в консоль, возвращает число типа int-количество сравнений.
+	int n;                                        //Кол-во сравнений.(в SortChoice аналагично)
+	//...///
+	return n;                                     //Возвращаем кол-во сравнений
+}
+
+/// <summary>
+/// //Функция SortChoice сортирует полученный вектор прямым выбором
+/// </summary>
+/// <param name="v"></param>
+/// <returns></returns>
+int SortChoice(std::vector<Student> v) {               //Функция SortChoice сортирует полученный вектор прямым выбором, выводит отсортированный вектор в консоль, возвращает число типа int-количество сравнений.
+	int n=1;
+	//...//
+	return n;
+}
+ 
+/// <summary>
+/// //Функция получения рандомного имени.
+/// </summary>
+/// <returns></returns>
+std::string GetRand() {                                
+	std::vector<std::string>Nabor = { "Sergey","Aleksandr","Andrey","Ignat","Maksim","Elena,","Ekaterina","Elizaveta","Olga","Ivan","Oleg","Anastasiya","Alexey","Marina" };   //Набор имён для случайного набора. (14 имён)
+	return Nabor[rand() %14];
+}
+
+
+int main()
+{
+	std::vector<Student>student;                       //Вектор, заполненный "учениками", требуемый к сортировке.
+	int size;                                     //Переменная, указывающая сколько учеников "пришло на урок".
+	//Student x;   Тестовая переменная.
+	std::cin >> size;                                  //Вводим кол-во учеников.
+	for (int i = 0; i < size; i++) {              //Цикл заполнения массива учениками с помощью рандома.
+		student[i].Name = GetRand();     //Заполнение имени из набора имён.
+		student[i].Height = rand() % 190 + 150;   //Заполнение роста в диапазоне от 150 до 190.
+	}
+	/*/x.Name = Nabor[rand() % 14];
+	x.Height = rand() % 190 + 150;
+	cout << x.Name << " " << x.Height;               Тестовый вариант для проверки рандома.*/
+	return 0;
+}
