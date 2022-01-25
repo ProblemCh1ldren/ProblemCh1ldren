@@ -5,56 +5,310 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <functional>
+#include <numeric>
 
+
+/// <summary>
+/// Тип студента с именем и ростом
+/// </summary>
 struct Student {                     //Класс для переменной: Ученик.
-	std::string Name;                     //Его имя.
-	int Height;                      //Его рост.
+	std::string name;                     //Его имя.
+	int height;                      //Его рост.
+	int age;                         //Возраст.
 };
 
 /// <summary>
-/// //Функция SortBubble сортирует полученный вектор пузырьком.
+/// Кол-во сравнений и сортировка массива методом пузырька
 /// </summary>
 /// <param name="v"></param>
 /// <returns></returns>
-int SortBubble(std::vector<Student> v) {               //Функция SortBubble сортирует полученный вектор пузырьком, выводит отсортированный вектор в консоль, возвращает число типа int-количество сравнений.
-	int n;                                        //Кол-во сравнений.(в SortChoice аналагично)
-	//...///
+int EffecientBubble(std::vector<Student>& v) {               
+	int n = 0;
+	for (int i = 1; i < v.size(); i++) {
+		for (int j = 0; j < v.size() - 1; j++) {
+			if (v[j].height > v[j + 1].height) {    //За один проход по массиву в начало массива падает минимальный элемент
+				n++;                          //Подсчёт сравнений
+				std::swap(v[j], v[j + 1]);               //Меняется два соседних элемента
+			}
+		}
+	}
 	return n;                                     //Возвращаем кол-во сравнений
 }
 
 /// <summary>
-/// //Функция SortChoice сортирует полученный вектор прямым выбором
+/// //Кол-во сравнений и сортировка массива прямым выбором
 /// </summary>
 /// <param name="v"></param>
 /// <returns></returns>
-int SortChoice(std::vector<Student> v) {               //Функция SortChoice сортирует полученный вектор прямым выбором, выводит отсортированный вектор в консоль, возвращает число типа int-количество сравнений.
-	int n=1;
-	//...//
+int EffecientChoice(std::vector<Student>& v) {               
+	int n = 0;
+	int min; // для поиска минимального элемента и для обмена
+	if (v.size() == 0) return 0;
+	for (int i = 0; i < v.size() - 1; i++)
+	{
+		min = i; // запоминаем индекс текущего элемента
+		// ищем минимальный элемент чтобы поместить на место i-ого
+		for (int j = i + 1; j < v.size(); j++)  // для остальных элементов после i-ого
+		{
+			
+			if (v[j].height < v[min].height) // если элемент меньше минимального,
+				min = j;       // запоминаем его индекс в min
+		}
+		n++;
+		std::swap(v[i], v[min]);
+	}
 	return n;
 }
- 
+
 /// <summary>
 /// //Функция получения рандомного имени.
 /// </summary>
 /// <returns></returns>
-std::string GetRand() {                                
-	std::vector<std::string>Nabor = { "Sergey","Aleksandr","Andrey","Ignat","Maksim","Elena,","Ekaterina","Elizaveta","Olga","Ivan","Oleg","Anastasiya","Alexey","Marina" };   //Набор имён для случайного набора. (14 имён)
-	return Nabor[rand() %14];
+std::string GetRandomName() {
+	std::vector <std::string> nabor = { "Sergey","Aleksandr","Andrey","Ignat","Maksim","Elena","Ekaterina","Elizaveta","Olga","Ivan","Oleg","Anastasiya","Alexey","Marina","Oksana","Valentin","Lidia","Pavel","Nazar","Ahmed" };   //Набор имён для случайного набора. (14 имён)
+	return nabor[rand() % nabor.size()];
 }
 
+/// <summary>
+/// Функция получения рандомного числа(для  размера и роста c возрастом)
+/// </summary>
+/// <param name="min"></param>
+/// <param name="max"></param>
+/// <returns></returns>
+int GetRandomInt(int min, int max) {
+	int x = rand() % (max - min) + min;
+	return x;
+}
+
+  /// <summary>
+  /// Генерация одного ученика
+  /// </summary>
+  /// <returns></returns>
+  Student GetRandomStudent() {
+	Student x;
+	x.name = GetRandomName();
+	x.height = GetRandomInt(151, 190);
+	x.age = GetRandomInt(10, 22);
+	return x;
+}
+
+/// <summary>
+/// Формирование вектора студентов
+/// </summary>
+/// <param name="size"></param>
+/// <returns></returns>
+std::vector<Student> GetRandomArray(const int& size) {
+	Student x;
+	std::vector<Student> student;
+	for (int i = 0; i < size; i++) {                   //Цикл заполнения массива учениками с помощью рандома.
+		student.push_back(GetRandomStudent());                           //Заносим в вектор
+	}
+	return student;
+}
+
+/// <summary>
+/// Вывод вектора студентов
+/// </summary>
+/// <param name="student"></param>
+void PrintStudents(const std::vector<Student>& student) {
+	for (int i = 0; i < student.size(); i++) {
+		std::cout << student[i].name << " "<<student[i].age<< " " << student[i].height << std::endl;
+	}
+	if (student.size() == 0) std::cout << "Пустой вектор" << std::endl;
+}
+
+
+/// <summary>
+/// Подсчёт среднего арифметического и определение наибольшего.
+/// </summary>
+/// <param name="comparison_bubble"></param>
+/// <param name="comparison_choice"></param>
+/// <returns></returns>
+void ComparisonSortEffective(const std::vector<int>& comparison_bubble, const std::vector<int>& comparison_choice) {
+	int half_arithmetic_bubble = std::accumulate(comparison_bubble.begin(), comparison_bubble.end(),0);
+	int half_arithmetic_choice = std::accumulate(comparison_choice.begin(), comparison_choice.end(),0);
+	half_arithmetic_bubble = half_arithmetic_bubble / comparison_bubble.size();
+	half_arithmetic_choice = half_arithmetic_choice / comparison_choice.size();
+	std::cout << "Efficiency of " << comparison_bubble.size() << " implementations SortBubble : " << half_arithmetic_bubble << " / " << "Efficiency of "<< comparison_choice.size() << " implementations SortChoice : " << half_arithmetic_choice << std::endl;
+}
+
+
+/// <summary>
+/// Тест сортировки пузырьком массива с 5 элементами.
+/// </summary>
+void Test_SortBubbleArray()
+{
+	std::vector<Student>students = { {"Sergey",175,19},{"Mikhail",185,20},{"Maksim",187,18},{"Elena",171,19},{"Oksana",167,18} };
+	int n = EffecientBubble(students);
+	int x=0;
+	EffecientBubble(students);
+	for (size_t i = 0; i < students.size()-1; i++)
+	{
+		if (students[i].height <= students[i + 1].height)
+		{
+			x++;
+		}
+	}
+	std::cout << "Отсортированный пузырьком вектор с 5 элементами:" << std::endl;
+	PrintStudents(students);
+	std::cout << std::endl << "Количество сравнений: " << n << std::endl;
+	if (x == students.size()-1 && n == 7)         //x=students.size()-1 потому что последнему элементу не с чем сравниваться.
+	{
+		std::cout << "Тест выполнен успешно!" << std::endl;
+		return;
+	}
+	std::cout << "Тест не пройден!"<<std::endl;
+}
+/// <summary>
+/// Тест сортировки выбором на массиве с 5 элементами
+/// </summary>
+void Test_SortChoiceArray()
+{
+	std::vector<Student>students = { {"Sergey",175,19},{"Mikhail",185,20},{"Maksim",187,18},{"Elena",171,19},{"Oksana",167,18} };
+	int n = EffecientChoice(students);
+	int x = 0;
+	EffecientChoice(students);
+	for (size_t i = 0; i < students.size() - 1; i++)
+	{
+		if (students[i].height <= students[i + 1].height)
+		{
+			x++;
+		}
+	}
+	std::cout<< std::endl << "Отсортированный прямым выбором вектор с 5 элементами:" << std::endl;
+	PrintStudents(students);
+	std::cout << std::endl << "Количество сравнений: " << n << std::endl;
+	if (x == students.size() - 1 && n == 4)         //x=students.size()-1 потому что последнему элементу не с чем сравниваться.
+	{
+		std::cout << "Тест выполнен успешно!" << std::endl;
+		return;
+	}
+	std::cout << "Тест не пройден!" << std::endl;
+}
+/// <summary>
+/// Тест сортировки пузырьком массива с 1 элементом.
+/// </summary>
+void Test_SortBubbleArrayOfOneElement()
+{
+	std::vector<Student>student = { {"Sergey",176,19} };
+	int n = EffecientBubble(student);
+	EffecientBubble(student);
+	std::cout << std::endl << "Отсортированный пузырьком вектор с 1 элементом:" << std::endl;
+	PrintStudents(student);
+	std::cout << std::endl << "Количество сравнений: " << n << std::endl;
+	if (student.size() == 1 && n == 0)
+	{
+		std::cout << "Тест выполнен успешно!" << std::endl;
+		return;
+	}
+	std::cout << "Тест не пройден!" << std::endl;
+}
+/// <summary>
+/// Тест сортировки выбором вектора с 1 элементом
+/// </summary>
+void Test_SortChoiceArrayOfOneElement()
+{
+	std::vector<Student>student = { {"Sergey",176,19} };
+	int n = EffecientChoice(student);
+	EffecientChoice(student);
+	std::cout << std::endl << "Отсортированный прямым выбором вектор с 1 элементом:" << std::endl;
+	PrintStudents(student);
+	std::cout << std::endl << "Количество сравнений: " << n << std::endl;
+	if (student.size() == 1 && n == 0)
+	{
+		std::cout << "Тест выполнен успешно!" << std::endl;
+		return;
+	}
+	std::cout << "Тест не пройден!" << std::endl;
+}
+/// <summary>
+/// Тест сортировки пузырьком пустого вектора
+/// </summary>
+void Test_SortBubbleArrayEmpty()
+{
+	std::vector<Student>student;
+	int n = EffecientBubble(student);
+	EffecientBubble(student);
+	std::cout << std::endl << "Отсортированный пузырьком пустой вектор:" << std::endl;
+	PrintStudents(student);
+	std::cout << std::endl << "Количество сравнений: " << n << std::endl;
+	if (student.size() == 0 && n == 0)
+	{
+		std::cout << "Тест выполнен успешно!" << std::endl;
+		return;
+	}
+	std::cout << "Тест не пройден!" << std::endl;
+}
+/// <summary>
+/// Тест сортировки выбором пустого вектора
+/// </summary>
+void Test_SortChoiceArrayEmpty()
+{
+	std::vector<Student>student;
+	int n = EffecientChoice(student);
+	EffecientChoice(student);
+	std::cout << std::endl << "Отсортированный прямым выбором пустой вектор:" << std::endl;
+	PrintStudents(student);
+	std::cout << std::endl << "Количество сравнений: " << n << std::endl;
+	if (student.size() == 0 && n == 0)
+	{
+		std::cout << "Тест выполнен успешно!" << std::endl;
+		return;
+	}
+	std::cout << "Тест не пройден!" << std::endl;
+}
+/// <summary>
+/// Реализация задачи
+/// </summary>
+void App()
+{
+	int i = 0;               //Кол-во реализаций
+	std::vector<int> comparison_bubble, comparison_choice;
+	while (i < 100) {
+		std::vector<Student> students1 = GetRandomArray(GetRandomInt(31, 70));;                       //Вектор, заполненный "учениками", требуемый к сортировке.
+		std::vector<Student> students2 = GetRandomArray(GetRandomInt(31, 70));;
+		comparison_bubble.push_back(EffecientBubble(students1));
+		comparison_choice.push_back(EffecientChoice(students2));
+		i++;
+		students1.clear();
+		students2.clear();
+	}
+	ComparisonSortEffective(comparison_bubble, comparison_choice);
+}
+
+/// <summary>
+/// Тесты
+/// </summary>
+void Test()
+{
+	Test_SortBubbleArray();
+	Test_SortChoiceArray();
+	Test_SortBubbleArrayOfOneElement();
+	Test_SortChoiceArrayOfOneElement();
+	Test_SortBubbleArrayEmpty();
+	Test_SortChoiceArrayEmpty();
+}
 
 int main()
 {
-	std::vector<Student>student;                       //Вектор, заполненный "учениками", требуемый к сортировке.
-	int size;                                     //Переменная, указывающая сколько учеников "пришло на урок".
-	//Student x;   Тестовая переменная.
-	std::cin >> size;                                  //Вводим кол-во учеников.
-	for (int i = 0; i < size; i++) {              //Цикл заполнения массива учениками с помощью рандома.
-		student[i].Name = GetRand();     //Заполнение имени из набора имён.
-		student[i].Height = rand() % 190 + 150;   //Заполнение роста в диапазоне от 150 до 190.
+	setlocale(LC_ALL, "Russian");
+	std::cout << "1-Среднее число сравнений по 100 реализациям сортировки пузырьком и прямым выбором." << std::endl;
+	std::cout << "2-Тест программы." << std::endl;
+	int x;
+	std::cin >> (x);
+	switch (x)
+	{
+		case 1:
+			App();
+			break;
+		case 2:
+			Test();
+			break;
+		default:
+			std::cout << "Введите корректное число!";
 	}
-	/*/x.Name = Nabor[rand() % 14];
-	x.Height = rand() % 190 + 150;
-	cout << x.Name << " " << x.Height;               Тестовый вариант для проверки рандома.*/
+		
 	return 0;
 }
+
